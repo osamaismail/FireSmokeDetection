@@ -15,13 +15,14 @@ classes = ["Fire", "Smoke"]
 
 # Create a VideoCapture object to read the video
 # cap = cv2.VideoCapture('Path/to/the/video')
-cap = cv2.VideoCapture(0)	# For camera use
+cap = cv2.VideoCapture(0)	    # For camera use
 
 
 while cap.isOpened():
     # Read a frame from the video
     ret, frame = cap.read()
-    frame = cv2.resize(frame,(640,360))
+    
+    frame = cv2.resize(frame, (640, 360))
 
     # Break the loop if the video is over
     if not ret:

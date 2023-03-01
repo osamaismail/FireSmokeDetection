@@ -9,7 +9,6 @@ from sklearn.metrics import confusion_matrix, classification_report
 GPU_memory_growth()
 
 data_dir = "labeledImages"
-# data_dir = "TestImages"
 
 # Load and preprocess the data
 X, y = preprocess_data(data_dir, grayscale=True)  # set grayscale argument to True
@@ -39,10 +38,6 @@ input_layer_stacked = tf.keras.layers.concatenate([input_layer, input_layer, inp
 
 # Load the MobileNetV2 model with the modified input layer
 base_model = tf.keras.applications.MobileNetV2(input_tensor=input_layer_stacked, include_top=False, weights='imagenet')
-
-
-# Load the MobileNetV2 model
-# base_model = tf.keras.applications.MobileNetV2(input_shape=(224,224,1), include_top=False, weights='imagenet')  # set input_shape to (224, 224, 1) for grayscale input
 
 # Freeze the base model layers
 base_model.trainable = False
@@ -75,7 +70,7 @@ print('Loss:', test_loss)
 print('Accuracy:', test_acc)
 
 # Save the model for future use
-model.save("detectGray3.h5")
+model.save("detectGray.h5")
 
 # Plot the training and validation accuracy
 acc = history.history['accuracy']
