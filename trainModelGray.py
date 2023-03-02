@@ -63,11 +63,23 @@ model.summary()
 # Train the model
 history = model.fit(X_train, y_train, epochs=15, batch_size=8, validation_data=(X_val, y_val))
 
-# Evaluate the model
-test_loss, test_acc = model.evaluate(X_test, y_test)
 
-print('Loss:', test_loss)
-print('Accuracy:', test_acc)
+# Split the test data and labels into two arrays based on the class labels
+test_data_class_0 = X_test[y_test == 0]
+test_labels_class_0 = y_test[y_test == 0]
+
+test_data_class_1 = X_test[y_test == 1]
+test_labels_class_1 = y_test[y_test == 1]
+
+
+# Evaluate the model on each array and print the test loss and accuracy for each class separately
+test_loss_class_0, test_acc_class_0 = model.evaluate(test_data_class_0, test_labels_class_0)
+print("Class Fire Test Loss:", test_loss_class_0)
+print("Class Fire Test Accuracy:", test_acc_class_0)
+
+test_loss_class_1, test_acc_class_1 = model.evaluate(test_data_class_1, test_labels_class_1)
+print("Class Smoke Test Loss:", test_loss_class_1)
+print("Class Smoke Test Accuracy:", test_acc_class_1)
 
 # Save the model for future use
 model.save("detectGray.h5")

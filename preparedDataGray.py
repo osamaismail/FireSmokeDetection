@@ -13,6 +13,7 @@ def preprocess_data(data_dir, size=(224, 224), grayscale=False):
     X = []
     y = []
     classes = {'Fire': 0, 'Smoke': 1}
+    f = s = 0
 
     for filename in os.listdir(data_dir):
         if filename.endswith('.json'):
@@ -35,9 +36,15 @@ def preprocess_data(data_dir, size=(224, 224), grayscale=False):
                         roi = cv2.resize(roi, size)
                         X.append(roi)
                         image_labels.append(class_id)
+                        if label == 'Fire':
+                            f += 1
+                        else:
+                            s += 1
                 y.extend(image_labels)
             else:
                 print("File not found:", ImageName)
+    print('Fire:', f)
+    print('Smoke:', s)
     X = np.array(X)
     y = np.array(y)
     return X, y
