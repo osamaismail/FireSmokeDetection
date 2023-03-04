@@ -4,7 +4,7 @@ from preparedDataGray import preprocess_data
 from getTestedImagesGray import testDataLabels
 from checkingGPU import GPU_memory_growth
 import numpy as np
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix, classification_report, average_precision_score, precision_recall_curve
 
 GPU_memory_growth()
 
@@ -61,7 +61,7 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=
 model.summary()
 
 # Train the model
-history = model.fit(X_train, y_train, epochs=15, batch_size=8, validation_data=(X_val, y_val))
+history = model.fit(X_train, y_train, epochs=50, batch_size=8, validation_data=(X_val, y_val))
 
 
 # Split the test data and labels into two arrays based on the class labels
@@ -114,6 +114,15 @@ test_data, test_labels = testDataLabels(testData, grayscale=True) # set grayscal
 # Make predictions on the test data
 predictions = model.predict(test_data)
 
+# Calculate precision and recall values for the positive class
+precision, recall, _ = precision_recall_curve(test_labels, predictions[:, 1])
+
+# Compute the average precision (AP)
+ap = average_precision_score(test_labels, predictions[:, 1])
+
+# Print the mAP value
+print("mAP: {ap:.2f}")
+
 # Convert the predictions to class labels
 predictions_class = np.argmax(predictions, axis=1)
 
@@ -128,3 +137,10 @@ print("Confusion Matrix:")
 print(conf_mat)
 print("\nClassification Report:")
 print(class_rep)
+
+# Save the confusion matrix and classification report to a text file
+with open("CC-report.txt", "w") as f:
+        f.write("Confusion Matrix:\n")
+        np.savetxt(f, conf_mat, fmt="%d")
+        f.write("\nClassification Report:\n")
+        f.write(class_rep)
