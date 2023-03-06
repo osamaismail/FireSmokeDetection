@@ -1,7 +1,9 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from preparedDataGray import preprocess_data
-from getTestedImagesGray import testDataLabels
+# from preparedDataGray import preprocess_data
+# from getTestedImagesGray import testDataLabels
+from newPreparedData import preprocess_data
+from newTestedimages import testDataLabels
 from checkingGPU import GPU_memory_growth
 import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report, average_precision_score, precision_recall_curve
@@ -82,7 +84,7 @@ print("Class Smoke Test Loss:", test_loss_class_1)
 print("Class Smoke Test Accuracy:", test_acc_class_1)
 
 # Save the model for future use
-model.save("detectGray.h5")
+model.save("detectGray1.h5")
 
 # Plot the training and validation accuracy
 acc = history.history['accuracy']
@@ -121,7 +123,7 @@ precision, recall, _ = precision_recall_curve(test_labels, predictions[:, 1])
 ap = average_precision_score(test_labels, predictions[:, 1])
 
 # Print the mAP value
-print("mAP: {ap:.2f}")
+print(f"mAP: {ap:.2f}")
 
 # Convert the predictions to class labels
 predictions_class = np.argmax(predictions, axis=1)
@@ -144,3 +146,4 @@ with open("CC-report.txt", "w") as f:
         np.savetxt(f, conf_mat, fmt="%d")
         f.write("\nClassification Report:\n")
         f.write(class_rep)
+        f.write(F"\nmAP:{ap:.2f}")

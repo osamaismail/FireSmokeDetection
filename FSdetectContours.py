@@ -8,21 +8,21 @@ GPU_memory_growth()
 
 
 # Load the trained model
-model = load_model('Path/to/trained/model/.h5')
+model = load_model('detectGray.h5')
 
 # Define the classes
 classes = ["Fire", "Smoke"]
 
 # Create a VideoCapture object to read the video
-# cap = cv2.VideoCapture('Path/to/the/video')
-cap = cv2.VideoCapture(0)	    # For camera use
+cap = cv2.VideoCapture('Video')
+# cap = cv2.VideoCapture(0)	    # For camera use
 
 
 while cap.isOpened():
     # Read a frame from the video
     ret, frame = cap.read()
 
-    frame = cv2.resize(frame, (640, 360))
+    frame = cv2.resize(frame, (480, 360))
 
     # Break the loop if the video is over
     if not ret:
@@ -70,8 +70,18 @@ while cap.isOpened():
 
         # Draw the bounding box and label on the frame
         if class_label in classes and pred[0][class_idx] > 0.9:
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 1)
-            cv2.putText(frame, f'{class_label}:{pred[0][class_idx]*100:.2f}', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 1)
+            if class_label == "Fire":
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 1)
+                cv2.putText(frame, f'{class_label}:{pred[0][class_idx] * 100:.2f}', (x, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 1)
+            elif class_label == "Smoke":
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 1)
+                cv2.putText(frame, f'{class_label}:{pred[0][class_idx] * 100:.2f}', (x, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 1)
+
+            # cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 1)
+            # cv2.putText(frame, f'{class_label}:{pred[0][class_idx]*100:.2f}', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 1)
+
 
     # Display the frame
     cv2.imshow('frame', frame)
