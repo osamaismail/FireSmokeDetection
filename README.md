@@ -16,7 +16,7 @@ This code can be used as a preprocessing step for training a machine learning mo
 
 This code defines a function GPU_memory_growth which sets the memory growth of the available GPUs in TensorFlow.
 
-The function sets the environment variable TF_CPP_MIN_LOG_LEVEL to 3 to suppress TensorFlow logs. Then, it retrieves a list of physical GPUs using tf.config.list_physical_devices('GPU'). If there are available GPUs, the function sets the memory growth of each GPU using tf.config.experimental.set_memory_growth(gpu, True). This enables TensorFlow to allocate memory on the GPU as needed instead of allocating all of the available memory upfront, which can lead to out-of-memory errors. The function then prints the number of physical and logical GPUs available using tf.config.list_logical_devices('GPU').
+The function sets the environment variable **TF_CPP_MIN_LOG_LEVEL** to 3 to suppress TensorFlow logs. Then, it retrieves a list of physical GPUs using **tf.config.list_physical_devices('GPU')**. If there are available GPUs, the function sets the memory growth of each GPU using **tf.config.experimental.set_memory_growth(gpu, True)**. This enables TensorFlow to allocate memory on the GPU as needed instead of allocating all of the available memory upfront, which can lead to out-of-memory errors. The function then prints the number of physical and logical GPUs available using **tf.config.list_logical_devices('GPU')**.
 
 This function can be called before running a TensorFlow script that uses GPU(s) to ensure that memory is allocated efficiently. This can be especially useful when working with large datasets or models that require a lot of GPU memory.
 
@@ -44,8 +44,41 @@ Overall, this code can be used as a starting point to train a machine learning m
 
 ## 5- FSdetectContours.py
 
-This code detects fire and smoke in a video stream using a pre-trained machine learning model.
+This code uses **OpenCV (cv2)** and a pre-trained Keras model to detect fire and smoke in a video. Here's a high-level overview of the code:
 
-The code first loads the pre-trained model using load_model from keras.models and defines the classes to be detected, which are "Fire" and "Smoke". The video stream is read using cv2.VideoCapture. The video frames are then processed in a loop. Each frame is first resized and converted to grayscale. The image is thresholded to convert it to binary, and the contours are found using cv2.findContours. For each contour, the area is computed, and small or large contours are filtered out. The bounding rectangle of the contour is extracted, and the region of interest (ROI) is cropped from the grayscale image. The ROI is then resized and normalized to match the input size and range of the model. A prediction is then made using the model, and the class with the highest probability is determined. If the class label is either "Fire" or "Smoke" and the probability is greater than 0.9, the bounding box and label are drawn on the frame. The processed frame is displayed, and the loop continues until the 'q' key is pressed, at which point the video stream is released and the display window is closed.
+1. Import necessary libraries: OpenCV (cv2), NumPy, Keras, and a custom function GPU_memory_growth.
+2. Call GPU_memory_growth() function to allow the GPU memory to grow as needed.
+3. Load the pre-trained Keras model from the file 'Model.h5'.
+4. Define the classes (Fire and Smoke) that the model will detect.
+5. Create a VideoCapture object to read a video file 'Video.mp4' or a camera stream.
+6. Set filtering parameters for contours to be considered as possible fire or smoke regions.
+7. Iterate through the video frames:
+- Read a frame from the video and resize it.
+- If the video is over, break the loop.
+- Convert the frame to grayscale and threshold it to create a binary image.
+- Find contours in the binary image.
+- For each contour, apply filters (area, aspect ratio, distance from the edge, and solidity) to determine if it's a candidate for fire or smoke.
+- For each candidate contour, extract the Region of Interest (ROI) from the grayscale image, resize and normalize it, and then feed it to the model for prediction.
+- If the model's prediction probability is above 0.5, draw a bounding box and label around the detected fire or smoke region.
+- Display the frame with the detections.
+- If the 'q' key is pressed, break the loop.
+8. Release the resources and close the video display window.
 
-Overall, this code demonstrates how a pre-trained machine learning model can be used for real-time fire and smoke detection in a video stream using computer vision techniques. The model can be modified and tuned to improve its accuracy and performance.
+The script reads a video file (or camera stream) and processes it frame by frame. It uses contour properties and a pre-trained Keras model to detect fire and smoke in each frame, and then it displays the detections in real-time. The script stops processing the video when it reaches the end or when the user presses the 'q' key.
+
+
+### cv2.findContours
+
+Using the cv2.findContours function from the OpenCV library to find contours in a binary image. The function returns a list of contours found in the image, and this line is assigning that list to the variable contours.
+
+Let's break down the arguments passed to the cv2.findContours function:
+
+1. **thresh**: This is the input binary image where contours will be detected. It has been created in the previous lines of the code by applying a threshold to the grayscale version of the frame.
+
+2. **cv2.RETR_EXTERNAL**: This is the contour retrieval mode. In this case, it's set to RETR_EXTERNAL, which means that the function will only retrieve the outermost (or external) contours in the hierarchy. It effectively ignores nested contours, i.e., contours that are completely enclosed by other contours.
+
+3. **cv2.CHAIN_APPROX_NONE**: This is the contour approximation method. In this case, it's set to CHAIN_APPROX_NONE, which means that the function will store all the contour points. In other words, no contour points will be compressed or approximated; all the points along the contour will be retained.
+
+The function also returns a second output, which is the hierarchy information of the contours. However, this output is not needed in this specific code, so it's assigned to the dummy variable _ to discard it.
+
+In summary, this line of code finds the external contours in a binary image (thresh) and stores all the points along those contours in the variable contours.

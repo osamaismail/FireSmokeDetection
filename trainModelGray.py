@@ -10,7 +10,8 @@ from sklearn.metrics import confusion_matrix, classification_report, average_pre
 
 GPU_memory_growth()
 
-data_dir = "labeledImages"
+# data_dir = "labeledImages"
+data_dir = "train"
 
 # Load and preprocess the data
 X, y = preprocess_data(data_dir, grayscale=True)  # set grayscale argument to True
@@ -84,7 +85,7 @@ print("Class Smoke Test Loss:", test_loss_class_1)
 print("Class Smoke Test Accuracy:", test_acc_class_1)
 
 # Save the model for future use
-model.save("detectGray1.h5")
+model.save("detectGray2.h5")
 
 # Plot the training and validation accuracy
 acc = history.history['accuracy']
@@ -110,7 +111,10 @@ plt.title('Training and Validation Loss')
 plt.show()
 
 # Load the test data and labels
-testData = 'TestImages'
+# testData = 'TestImages'
+
+testData = 'test'
+
 test_data, test_labels = testDataLabels(testData, grayscale=True) # set grayscale argument to True
 
 # Make predictions on the test data
